@@ -5,8 +5,8 @@ import { loginRequest } from "./authConfig";
 import Button from "react-bootstrap/Button";
 import { ProfileData } from "./components/ProfileData";
 import { callMsGraph } from "./graph";
-import { username } from "./authConfig";
-import { username2 } from "./authConfig2";
+import { username, username2 } from "./authConfig";
+//import { username2 } from "./authConfig2";
 import { AccountInfo } from "@azure/msal-common";
 
 function App() {
