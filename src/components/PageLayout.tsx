@@ -1,9 +1,9 @@
 import React from "react";
 import Navbar from "react-bootstrap/Navbar";
-import { useIsAuthenticated, useMsal } from "@azure/msal-react";
+import { useIsAuthenticated } from "@azure/msal-react";
 import { SignInButton } from "./SignInButton";
 import { SignOutButton } from "./SignOutButton";
-import { AccountInfo } from "@azure/msal-common";
+//import { AccountInfo } from "@azure/msal-common";
 //import { username } from "../authConfig";
 
 /**
@@ -21,17 +21,18 @@ export const PageLayout = (props: any) => {
 
     // const isAuthenticated = useIsAuthenticated(account);
 
-    const accountIdentifiers = {
-        username: props.username
-    };
+    // const accountIdentifiers = {
+    //     username: props.username
+    // };
 
-    const isAuthenticated = useIsAuthenticated(accountIdentifiers);
+    // const isAuthenticated = useIsAuthenticated(accountIdentifiers);
 
     return (
         <>
             <Navbar bg="primary" variant="dark">
                 <a className="navbar-brand" href="/">MSAL React Tutorial</a>
-                {isAuthenticated ? <SignOutButton username={props.username} /> : <SignInButton username={props.username} />}
+                {/* {isAuthenticated ? <SignOutButton username={props.username} /> : <SignInButton username={props.username} />} */}
+                <SignInButton />
             </Navbar>
             <h5>Welcome to the Microsoft Authentication Library For React Tutorial</h5>
             <br />

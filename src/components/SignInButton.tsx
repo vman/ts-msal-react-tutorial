@@ -1,21 +1,28 @@
 import React from "react";
 import { useMsal } from "@azure/msal-react";
-import { loginRequest } from "../authConfig";
+//import { loginRequest } from "../authConfig";
 import Button from "react-bootstrap/Button";
-import { AccountInfo, IPublicClientApplication } from "@azure/msal-browser";
+import { AccountInfo, IPublicClientApplication, PopupRequest, RedirectRequest } from "@azure/msal-browser";
 
 function handleLogin(instance: IPublicClientApplication, username: string) {
-    const currentAccount = instance.getAccountByUsername(username);
+    //const currentAccount = instance.getAccountByUsername(username) as AccountInfo;
 
-    const loginRequest = {
+    const loginRequest : PopupRequest = {
         scopes: ["User.Read"],
-        account: currentAccount as AccountInfo
+        prompt: 'select_account'
     };
 
-    instance.loginRedirect(loginRequest).catch(e => {
+    // if(currentAccount){
+    //     loginRequest.account = currentAccount
+    // }
+
+    // instance.loginRedirect(loginRequest).catch(e => {
+    //     console.error(e);
+    // });
+
+    instance.loginPopup(loginRequest).catch(e => {
         console.error(e);
     });
-
 }
 
 /**
@@ -26,5 +33,6 @@ export const SignInButton = (props: any) => {
 
     return (
         <Button variant="secondary" className="ml-auto" onClick={() => handleLogin(instance, props.username)}>Sign in</Button>
+        // <Button variant="secondary" className="ml-auto" onClick={() => handleLogin(instance)}>Sign in</Button>
     );
 }
