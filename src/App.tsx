@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { PageLayout } from "./components/PageLayout";
+//import { PageLayout } from "./components/PageLayout";
 import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal, useMsalAuthentication } from "@azure/msal-react";
 import { loginRequest } from "./authConfig";
 import Button from "react-bootstrap/Button";
 import { ProfileData } from "./components/ProfileData";
 import { callMsGraph } from "./graph";
-import { username, username2 } from "./authConfig";
+//import { username, username2 } from "./authConfig";
 import { AccountInfo } from "@azure/msal-common";
 
 // function App() {
@@ -38,15 +38,22 @@ import { InteractionType } from '@azure/msal-browser';
 function App() {
   const request = {
     //loginHint: "name@example.com",
-    scopes: ["User.Read"]
+    scopes: ["User.Read"],
+    prompt: 'select_account'
   }
   const { login, result, error } = useMsalAuthentication(InteractionType.Silent, request);
 
-  // useEffect(() => {
-  //     if (error) {
-  //         login(InteractionType.Redirect, request);
-  //     }
-  // }, [error]);
+  useEffect(() => {
+      if (error) {
+          login(InteractionType.Redirect, request);
+      }
+  }, [error]);
+
+  useEffect(() => {
+    if(result){
+      console.log(result);
+    }
+}, [result]);
 
   const { accounts } = useMsal();
 
@@ -58,15 +65,14 @@ function App() {
       <p>Anyone can see this paragraph.</p>
       <AuthenticatedTemplate>
         {accounts.map((account) => {
-          // return <p>Signed in as: {account.username}</p>
-          return <ProfileContent username={account.username}  />
+          return <div key={account.username}><ProfileContent username={account.username}  /></div>
         })}
 
       </AuthenticatedTemplate>
       <UnauthenticatedTemplate>
         <p>No users are signed in!</p>
       </UnauthenticatedTemplate>
-      <Button variant="secondary" onClick={handleLogin}>Sign in</Button>
+      <Button variant="secondary" onClick={handleLogin}>Sign in new user</Button>
     </React.Fragment>
   );
 }
@@ -78,7 +84,7 @@ function ProfileContent(props: any) {
   const [graphData, setGraphData] = useState(null);
 
   const account = instance.getAccountByHomeId(props.username);
-
+  
   function RequestProfileData() {
     const request = {
       ...loginRequest,
