@@ -6,7 +6,7 @@ import { callMsGraph } from "./graph";
 import { AccountInfo } from "@azure/msal-common";
 
 
-import { InteractionType } from '@azure/msal-browser';
+import { InteractionType, IPublicClientApplication } from '@azure/msal-browser';
 
 function App() {
   const request = {
@@ -15,11 +15,11 @@ function App() {
   }
   const { login, result, error } = useMsalAuthentication(InteractionType.Silent, request);
 
-  useEffect(() => {
-      if (error) {
-          login(InteractionType.Redirect, request);
-      }
-  }, [error]);
+  // useEffect(() => {
+  //     if (error) {
+  //         login(InteractionType.Redirect, request);
+  //     }
+  // }, [error]);
 
   useEffect(() => {
     if(result){
@@ -68,12 +68,21 @@ function ProfileContent(props: any) {
       });
     });
 
+    function handleLogout(instance: IPublicClientApplication, homeId: string) {
+  
+      const currentAccount = instance.getAccountByHomeId(homeId);
+      instance.logoutRedirect({
+          account: currentAccount
+      });
+  }
+
   return (
     <>
       <h5 className="card-title">Welcome {props.name}</h5>
       {graphData &&
         <ProfileData graphData={graphData} />
       }
+      <Button variant="secondary" className="ml-auto" onClick={() => handleLogout(instance, props.homeId)}>Sign out</Button>
     </>
   );
 };
