@@ -1,14 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal, useMsalAuthentication } from "@azure/msal-react";
 import Button from "react-bootstrap/Button";
-import { ProfileData } from "./components/ProfileData";
-import { callMsGraph } from "./graph";
-import { AccountInfo } from "@azure/msal-common";
+import { InteractionType } from '@azure/msal-browser';
+import ProfileContent from "./components/ProfileContent";
 
-
-import { InteractionType, IPublicClientApplication } from '@azure/msal-browser';
-
-function App() {
+const App: React.FunctionComponent = () => {
   const request = {
     scopes: ["User.Read"],
     prompt: 'select_account'
@@ -36,7 +32,7 @@ function App() {
     <React.Fragment>
       <AuthenticatedTemplate>
         {accounts.map((account) => {
-          return <div key={account.homeAccountId}><ProfileContent homeId={account.homeAccountId} name={account.name}  /></div>
+          return <div key={account.homeAccountId}><ProfileContent homeId={account.homeAccountId} name={account.name as string}  /></div>
         })}
 
       </AuthenticatedTemplate>
@@ -47,44 +43,5 @@ function App() {
     </React.Fragment>
   );
 }
-
-function ProfileContent(props: any) {
-  const { instance } = useMsal();
-  const [graphData, setGraphData] = useState(null);
-
-  const account = instance.getAccountByHomeId(props.homeId);
-  
-    const request = {
-      scopes: ["User.Read"],
-      account: account as AccountInfo
-    };
-
-    // Silently acquires an access token which is then attached to a request for Microsoft Graph data
-    instance.acquireTokenSilent(request).then((response) => {
-      callMsGraph(response.accessToken).then(response => setGraphData(response));
-    }).catch((e) => {
-      instance.acquireTokenPopup(request).then((response) => {
-        callMsGraph(response.accessToken).then(response => setGraphData(response));
-      });
-    });
-
-    function handleLogout(instance: IPublicClientApplication, homeId: string) {
-  
-      const currentAccount = instance.getAccountByHomeId(homeId);
-      instance.logoutRedirect({
-          account: currentAccount
-      });
-  }
-
-  return (
-    <>
-      <h5 className="card-title">Welcome {props.name}</h5>
-      {graphData &&
-        <ProfileData graphData={graphData} />
-      }
-      <Button variant="secondary" className="ml-auto" onClick={() => handleLogout(instance, props.homeId)}>Sign out</Button>
-    </>
-  );
-};
 
 export default App;
